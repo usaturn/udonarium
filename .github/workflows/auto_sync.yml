@@ -1,0 +1,28 @@
+name: Merge upstream branches
+
+on:
+  schedule:
+    - cron:  '59 * * * *'
+
+jobs:
+  rebase:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+      - name: Merge upstream
+        run: |
+          git config --global user.name ${NAME}
+          git config --global user.email ${EMAIL}
+          git config --global pull.rebase merges
+
+          git pull --unshallow
+          git remote add upstream ${REPO_FORK}
+          git fetch upstream
+
+          git checkout main
+          git merge --no-edit upstream/master
+          git push origin main
+        env:
+          REPO_FORK: https://github.com/TK11235/udonarium.git
+          NAME: usaturn
+          EMAIL: sample@sample.com
